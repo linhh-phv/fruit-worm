@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {
   LayoutAnimation,
+  LayoutAnimationConfig,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
+  UIManager,
   View,
 } from 'react-native';
 import {Colors} from '../../../../styles/colors';
@@ -39,6 +42,13 @@ export const GAME_BOUNDS: IBoundaries = {
 const MOVE_INTERVAL = 200;
 const SCORE_INCREMENT = 10;
 
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 const Game: React.FC = () => {
   const {navigation} = useGetNavigation();
 
@@ -52,8 +62,6 @@ const Game: React.FC = () => {
   useEffect(() => {
     if (!isGameOver) {
       const intervalId = setInterval(() => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
         !isPaused && moveWorm();
       }, MOVE_INTERVAL);
       return () => clearInterval(intervalId);
@@ -61,7 +69,25 @@ const Game: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGameOver, isPaused, worm]);
 
+  const CustomAni: LayoutAnimationConfig = {
+    duration: 200,
+    create: {
+      property: LayoutAnimation.Properties.opacity,
+      type: LayoutAnimation.Types.linear,
+    },
+    update: {
+      property: LayoutAnimation.Properties.opacity,
+      type: LayoutAnimation.Types.linear,
+    },
+    delete: {
+      duration: 100,
+      property: LayoutAnimation.Properties.opacity,
+      type: LayoutAnimation.Types.linear,
+    },
+  };
+
   const moveWorm = () => {
+    LayoutAnimation.configureNext(CustomAni);
     const wormHead = worm[0];
     const newHead = {...wormHead};
 
@@ -182,7 +208,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.primary,
-    paddingTop: Size.size32,
+    paddingTop: Size.size50,
   },
   boundaries: {
     borderColor: Colors.primary,

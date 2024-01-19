@@ -10,7 +10,7 @@ const scaleSize = (size: number) => (WINDOW_WIDTH / guidelineBaseWidth) * size;
 const NUM_WORM = 12;
 
 const HEIGHT_BOARD = scaleSize(
-  WINDOW_HEIGHT - 32 - 60 - checkPlatform<number>(24, 60),
+  WINDOW_HEIGHT - 32 - 60 - checkPlatform<number>(60, 100),
 );
 const WIDTH_BOARD = scaleSize(WINDOW_WIDTH - 24);
 
